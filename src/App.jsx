@@ -115,12 +115,12 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-200">
       <Header 
         title="Task Manager" 
         onClear={clearTasks} 
       />
-      <div className="w-full max-w-4xl mx-auto bg-white">
+      <div className="w-full max-w-4xl mx-auto p-4">
         <TaskList 
           tasks={tasks}
           onAddTask={addTask}

@@ -242,8 +242,8 @@ function TaskItem({
   return (
     <div 
       className={`flex w-full border-b border-gray-300 min-h-[42px] items-center
-        ${task.isDone ? 'bg-gray-50 line-through text-gray-400' : 
-          index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+        ${task.isDone ? 'bg-green-100 line-through text-gray-400' : 
+          index % 2 === 0 ? 'bg-red-100' : 'bg-gray-50'}`}
       onClick={onEdit}
     >
       <div className="w-1/4 p-2 border-r border-gray-200">
@@ -261,7 +261,7 @@ function TaskItem({
             e.stopPropagation();
             onToggleDone();
           }}
-          className={`px-2 py-1 rounded ${task.isDone ? 'text-green-600' : 'text-gray-600'}`}
+          className={`hover:bg-green-200 px-2 py-1 rounded ${task.isDone ? 'text-green-600' : 'text-gray-600'}`}
         >
           ✓
         </button>
@@ -270,7 +270,7 @@ function TaskItem({
             e.stopPropagation();
             onDelete();
           }}
-          className="text-red-600 hover:bg-red-50 px-2 py-1 rounded"
+          className="text-red-600 hover:bg-red-200 px-2 py-1 rounded"
         >
           ✕
         </button>
