@@ -114,11 +114,17 @@ function App() {
     }
   };
 
+  // Simple print function
+  const printTasks = () => {
+    window.print();
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white print:p-0">
       <Header 
         title="Task Manager" 
-        onClear={clearTasks} 
+        onClear={clearTasks}
+        onPrint={printTasks}
       />
       <div className="w-full max-w-4xl mx-auto bg-white">
         <TaskList 
