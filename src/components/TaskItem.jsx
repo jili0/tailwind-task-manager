@@ -69,6 +69,17 @@ function TaskItem({
     
     // Special handling for time formatting
     if (name === 'time') {
+      // Store raw value for hours only (e.g., "08")
+      // This allows users to continue typing without premature formatting
+      if (value.match(/^\d{1,3}$/)) {
+        setEditedTask(prev => ({
+          ...prev,
+          time: value
+        }));
+        return;
+      }
+      
+      // Handle hours and minutes (e.g., "0800")
       if (value.match(/^\d{4}$/)) {
         const hours = value.substring(0, 2);
         const minutes = value.substring(2, 4);
@@ -89,19 +100,35 @@ function TaskItem({
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      // Before saving, check if we need to format a partial date
-      if (editedTask.date && editedTask.date.match(/^\d{2}$/)) {
-        // Format day only (e.g., "04")
-        const day = editedTask.date;
+      // Handle date formatting for patterns 2 or 4 digits
+      if (editedTask.date && (editedTask.date.match(/^\d{2}$/) || editedTask.date.match(/^\d{4}$/))) {
         const today = new Date();
         const currentMonth = (today.getMonth() + 1).toString().padStart(2, '0');
         const currentYear = today.getFullYear();
         
-        const date = new Date(`${currentYear}-${currentMonth}-${day}`);
-        const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-        const weekday = days[date.getDay()];
+        let day, month, formattedDate;
         
-        const formattedDate = `${weekday}, ${day}.${currentMonth}.${currentYear}`;
+        if (editedTask.date.match(/^\d{2}$/)) {
+          // Format day only (e.g., "04")
+          day = editedTask.date;
+          month = currentMonth;
+          
+          const date = new Date(`${currentYear}-${month}-${day}`);
+          const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+          const weekday = days[date.getDay()];
+          
+          formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
+        } else {
+          // Format day and month (e.g., "0405")
+          day = editedTask.date.substring(0, 2);
+          month = editedTask.date.substring(2, 4);
+          
+          const date = new Date(`${currentYear}-${month}-${day}`);
+          const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+          const weekday = days[date.getDay()];
+          
+          formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
+        }
         
         // Save with the formatted date directly
         onSave({
@@ -111,24 +138,17 @@ function TaskItem({
         });
         return;
       }
-      else if (editedTask.date && editedTask.date.match(/^\d{4}$/)) {
-        // Format day and month (e.g., "0405")
-        const day = editedTask.date.substring(0, 2);
-        const month = editedTask.date.substring(2, 4);
-        const today = new Date();
-        const currentYear = today.getFullYear();
+      
+      // Handle time formatting for 2 digits pattern
+      if (editedTask.time && editedTask.time.match(/^\d{2}$/)) {
+        const hours = editedTask.time;
+        const formattedTime = `${hours}:00`;
         
-        const date = new Date(`${currentYear}-${month}-${day}`);
-        const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-        const weekday = days[date.getDay()];
-        
-        const formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
-        
-        // Save with the formatted date directly
+        // Save with the formatted time directly
         onSave({
           ...task,
           ...editedTask,
-          date: formattedDate
+          time: formattedTime
         });
         return;
       }
@@ -176,7 +196,7 @@ function TaskItem({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             className="w-full outline-none bg-transparent"
-            placeholder="enter 0800 or 0830"
+            placeholder="enter 08 or 0830"
           />
         </div>
         <div className="flex-1 p-2 border-r border-gray-200">
