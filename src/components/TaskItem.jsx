@@ -1,5 +1,5 @@
 // TaskItem.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 function TaskItem({ 
   task, 
@@ -15,6 +15,7 @@ function TaskItem({
     time: task.time || '',
     text: task.text || ''
   });
+  const timeInputRef = useRef(null);
 
   useEffect(() => {
     setEditedTask({
@@ -100,42 +101,51 @@ function TaskItem({
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      // Handle date formatting for patterns 2 or 4 digits
-      if (editedTask.date && (editedTask.date.match(/^\d{2}$/) || editedTask.date.match(/^\d{4}$/))) {
-        const today = new Date();
-        const currentMonth = (today.getMonth() + 1).toString().padStart(2, '0');
-        const currentYear = today.getFullYear();
+      // Special handling for date field - move focus to time field
+      if (e.target.name === 'date') {
+        e.preventDefault(); // Prevent the default Enter action
         
-        let day, month, formattedDate;
-        
-        if (editedTask.date.match(/^\d{2}$/)) {
-          // Format day only (e.g., "04")
-          day = editedTask.date;
-          month = currentMonth;
+        // Format date if it matches the patterns
+        if (editedTask.date && (editedTask.date.match(/^\d{2}$/) || editedTask.date.match(/^\d{4}$/))) {
+          const today = new Date();
+          const currentMonth = (today.getMonth() + 1).toString().padStart(2, '0');
+          const currentYear = today.getFullYear();
           
-          const date = new Date(`${currentYear}-${month}-${day}`);
-          const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-          const weekday = days[date.getDay()];
+          let day, month, formattedDate;
           
-          formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
-        } else {
-          // Format day and month (e.g., "0405")
-          day = editedTask.date.substring(0, 2);
-          month = editedTask.date.substring(2, 4);
+          if (editedTask.date.match(/^\d{2}$/)) {
+            // Format day only (e.g., "04")
+            day = editedTask.date;
+            month = currentMonth;
+            
+            const date = new Date(`${currentYear}-${month}-${day}`);
+            const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+            const weekday = days[date.getDay()];
+            
+            formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
+          } else {
+            // Format day and month (e.g., "0405")
+            day = editedTask.date.substring(0, 2);
+            month = editedTask.date.substring(2, 4);
+            
+            const date = new Date(`${currentYear}-${month}-${day}`);
+            const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+            const weekday = days[date.getDay()];
+            
+            formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
+          }
           
-          const date = new Date(`${currentYear}-${month}-${day}`);
-          const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-          const weekday = days[date.getDay()];
-          
-          formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
+          // Update the formatted date in state
+          setEditedTask(prev => ({
+            ...prev,
+            date: formattedDate
+          }));
         }
         
-        // Save with the formatted date directly
-        onSave({
-          ...task,
-          ...editedTask,
-          date: formattedDate
-        });
+        // Move focus to time field
+        if (timeInputRef.current) {
+          timeInputRef.current.focus();
+        }
         return;
       }
       
@@ -197,6 +207,7 @@ function TaskItem({
             onKeyDown={handleKeyDown}
             className="w-full outline-none bg-transparent"
             placeholder="enter 08 or 0830"
+            ref={timeInputRef}
           />
         </div>
         <div className="flex-1 p-2 border-r border-gray-200">

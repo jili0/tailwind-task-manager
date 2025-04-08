@@ -1,5 +1,5 @@
 // TaskInput.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 function TaskInput({ onAddTask }) {
   const [newTask, setNewTask] = useState({
@@ -7,6 +7,7 @@ function TaskInput({ onAddTask }) {
     time: '',
     text: ''
   });
+  const timeInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,48 +91,51 @@ function TaskInput({ onAddTask }) {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      // Handle date formatting for patterns 2 or 4 digits
-      if (newTask.date && (newTask.date.match(/^\d{2}$/) || newTask.date.match(/^\d{4}$/))) {
-        const today = new Date();
-        const currentMonth = (today.getMonth() + 1).toString().padStart(2, '0');
-        const currentYear = today.getFullYear();
+      // Special handling for date field - move focus to time field
+      if (e.target.name === 'date') {
+        e.preventDefault(); // Prevent the default Enter action
         
-        let day, month, formattedDate;
-        
-        if (newTask.date.match(/^\d{2}$/)) {
-          // Format day only (e.g., "04")
-          day = newTask.date;
-          month = currentMonth;
+        // Format date if it matches the patterns
+        if (newTask.date && (newTask.date.match(/^\d{2}$/) || newTask.date.match(/^\d{4}$/))) {
+          const today = new Date();
+          const currentMonth = (today.getMonth() + 1).toString().padStart(2, '0');
+          const currentYear = today.getFullYear();
           
-          const date = new Date(`${currentYear}-${month}-${day}`);
-          const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-          const weekday = days[date.getDay()];
+          let day, month, formattedDate;
           
-          formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
-        } else {
-          // Format day and month (e.g., "0405")
-          day = newTask.date.substring(0, 2);
-          month = newTask.date.substring(2, 4);
+          if (newTask.date.match(/^\d{2}$/)) {
+            // Format day only (e.g., "04")
+            day = newTask.date;
+            month = currentMonth;
+            
+            const date = new Date(`${currentYear}-${month}-${day}`);
+            const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+            const weekday = days[date.getDay()];
+            
+            formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
+          } else {
+            // Format day and month (e.g., "0405")
+            day = newTask.date.substring(0, 2);
+            month = newTask.date.substring(2, 4);
+            
+            const date = new Date(`${currentYear}-${month}-${day}`);
+            const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+            const weekday = days[date.getDay()];
+            
+            formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
+          }
           
-          const date = new Date(`${currentYear}-${month}-${day}`);
-          const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-          const weekday = days[date.getDay()];
-          
-          formattedDate = `${weekday}, ${day}.${month}.${currentYear}`;
+          // Update the formatted date in state
+          setNewTask(prev => ({
+            ...prev,
+            date: formattedDate
+          }));
         }
         
-        // Add task directly with formatted date
-        onAddTask({
-          ...newTask,
-          date: formattedDate
-        });
-        
-        // Reset input fields after adding task
-        setNewTask({
-          date: '',
-          time: '',
-          text: ''
-        });
+        // Move focus to time field
+        if (timeInputRef.current) {
+          timeInputRef.current.focus();
+        }
         return;
       }
       
@@ -140,21 +144,14 @@ function TaskInput({ onAddTask }) {
         const hours = newTask.time;
         const formattedTime = `${hours}:00`;
         
-        // Add task directly with formatted time
-        onAddTask({
-          ...newTask,
+        // Update time in state
+        setNewTask(prev => ({
+          ...prev,
           time: formattedTime
-        });
-        
-        // Reset input fields after adding task
-        setNewTask({
-          date: '',
-          time: '',
-          text: ''
-        });
-        return;
+        }));
       }
       
+      // Add the task for all other fields or if Enter is pressed in time field
       handleAddTask();
     }
   };
@@ -194,6 +191,7 @@ function TaskInput({ onAddTask }) {
           onKeyDown={handleKeyDown}
           className="w-full outline-none bg-transparent"
           placeholder="enter 08 or 0830"
+          ref={timeInputRef}
         />
       </div>
       <div className="flex-1 p-2 border-r border-gray-200">
