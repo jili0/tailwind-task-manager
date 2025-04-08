@@ -16,6 +16,7 @@ function TaskItem({
     text: task.text || ''
   });
   const timeInputRef = useRef(null);
+  const textInputRef = useRef(null);
 
   useEffect(() => {
     setEditedTask({
@@ -149,20 +150,30 @@ function TaskItem({
         return;
       }
       
-      // Handle time formatting for 2 digits pattern
-      if (editedTask.time && editedTask.time.match(/^\d{2}$/)) {
-        const hours = editedTask.time;
-        const formattedTime = `${hours}:00`;
+      // Special handling for time field - move focus to text field
+      if (e.target.name === 'time') {
+        e.preventDefault(); // Prevent the default Enter action
         
-        // Save with the formatted time directly
-        onSave({
-          ...task,
-          ...editedTask,
-          time: formattedTime
-        });
+        // Format time if it matches the 2-digit pattern
+        if (editedTask.time && editedTask.time.match(/^\d{2}$/)) {
+          const hours = editedTask.time;
+          const formattedTime = `${hours}:00`;
+          
+          // Update time in state
+          setEditedTask(prev => ({
+            ...prev,
+            time: formattedTime
+          }));
+        }
+        
+        // Move focus to text field
+        if (textInputRef.current) {
+          textInputRef.current.focus();
+        }
         return;
       }
       
+      // Save task on Enter in text field
       saveTask();
     }
   };
@@ -219,6 +230,7 @@ function TaskItem({
             onKeyDown={handleKeyDown}
             className="w-full outline-none bg-transparent"
             placeholder="Task description"
+            ref={textInputRef}
           />
         </div>
         <div className="w-1/6 flex justify-center items-center space-x-2">

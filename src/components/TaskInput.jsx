@@ -8,6 +8,7 @@ function TaskInput({ onAddTask }) {
     text: ''
   });
   const timeInputRef = useRef(null);
+  const textInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -139,19 +140,30 @@ function TaskInput({ onAddTask }) {
         return;
       }
       
-      // Handle time formatting for 2 digits pattern
-      if (newTask.time && newTask.time.match(/^\d{2}$/)) {
-        const hours = newTask.time;
-        const formattedTime = `${hours}:00`;
+      // Special handling for time field - move focus to text field
+      if (e.target.name === 'time') {
+        e.preventDefault(); // Prevent the default Enter action
         
-        // Update time in state
-        setNewTask(prev => ({
-          ...prev,
-          time: formattedTime
-        }));
+        // Format time if it matches the 2-digit pattern
+        if (newTask.time && newTask.time.match(/^\d{2}$/)) {
+          const hours = newTask.time;
+          const formattedTime = `${hours}:00`;
+          
+          // Update time in state
+          setNewTask(prev => ({
+            ...prev,
+            time: formattedTime
+          }));
+        }
+        
+        // Move focus to text field
+        if (textInputRef.current) {
+          textInputRef.current.focus();
+        }
+        return;
       }
       
-      // Add the task for all other fields or if Enter is pressed in time field
+      // Add the task if Enter is pressed in text field
       handleAddTask();
     }
   };
@@ -203,6 +215,7 @@ function TaskInput({ onAddTask }) {
           onKeyDown={handleKeyDown}
           className="w-full outline-none bg-transparent"
           placeholder="Task description"
+          ref={textInputRef}
         />
       </div>
       <div className="w-1/6 flex justify-center items-center">
