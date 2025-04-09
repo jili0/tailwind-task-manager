@@ -182,38 +182,38 @@ function TaskInput({ onAddTask }) {
   };
 
   return (
-    <div className="flex w-full border-b border-gray-300 min-h-[42px] items-center bg-white">
-      <div className="w-1/4 p-2 border-r border-gray-200">
+    <div className="flex w-full border-4 border-blue-700 min-h-[42px] items-center bg-blue-100">
+      <div className="w-1/4 p-2 border-r border-gray-700">
         <input
           type="text"
           name="date"
           value={newTask.date}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className="w-full outline-none bg-transparent"
+          className="w-full outline-none"
           placeholder="enter 04 or 0405 or 040525"
         />
       </div>
-      <div className="w-1/6 p-2 border-r border-gray-200">
+      <div className="w-1/6 p-2 border-r border-gray-700">
         <input
           type="text"
           name="time"
           value={newTask.time}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className="w-full outline-none bg-transparent"
+          className="w-full outline-none"
           placeholder="enter 08 or 0830"
           ref={timeInputRef}
         />
       </div>
-      <div className="flex-1 p-2 border-r border-gray-200">
+      <div className="flex-1 p-2 border-r border-gray-700">
         <input
           type="text"
           name="text"
           value={newTask.text}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className="w-full outline-none bg-transparent"
+          className="w-full outline-none"
           placeholder="Task description"
           ref={textInputRef}
         />
@@ -221,7 +221,7 @@ function TaskInput({ onAddTask }) {
       <div className="w-1/6 flex justify-center items-center">
         <button 
           onClick={handleAddTask}
-          className="text-blue-600 hover:bg-blue-50 px-2 py-1 rounded"
+          className="text-blue-600 hover:bg-blue-200 px-2 py-1 rounded"
         >
           Add
         </button>

@@ -195,8 +195,7 @@ function TaskItem({
 
   if (isEditing) {
     return (
-      <div className={`flex w-full border-b border-gray-300 min-h-[42px] items-center 
-        ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+      <div className="flex w-full border-gray-800 min-h-[42px] items-center">
         <div className="w-1/4 p-2 border-r border-gray-200">
           <input
             type="text"
@@ -204,7 +203,7 @@ function TaskItem({
             value={editedTask.date}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            className="w-full outline-none bg-transparent"
+            className="w-full outline-none"
             placeholder="enter 04 or 0405 or 040525"
             autoFocus
           />
@@ -216,7 +215,7 @@ function TaskItem({
             value={editedTask.time}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            className="w-full outline-none bg-transparent"
+            className="w-full outline-none"
             placeholder="enter 08 or 0830"
             ref={timeInputRef}
           />
@@ -228,7 +227,7 @@ function TaskItem({
             value={editedTask.text}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            className="w-full outline-none bg-transparent"
+            className="w-full outline-none"
             placeholder="Task description"
             ref={textInputRef}
           />
@@ -236,13 +235,13 @@ function TaskItem({
         <div className="w-1/6 flex justify-center items-center space-x-2">
           <button 
             onClick={saveTask}
-            className="text-green-600 hover:bg-green-50 px-2 py-1 rounded"
+            className="text-green-600 bg-green-200  hover:bg-green-400 px-2 py-1 rounded"
           >
             Save
           </button>
           <button 
             onClick={() => onSave(task)}
-            className="text-gray-600 hover:bg-gray-50 px-2 py-1 rounded"
+            className="text-red-600 bg-red-200 hover:bg-red-400 px-2 py-1 rounded"
           >
             Cancel
           </button>
@@ -254,8 +253,8 @@ function TaskItem({
   return (
     <div 
       className={`flex w-full border-b border-gray-300 min-h-[42px] items-center
-        ${task.isDone ? 'bg-green-100 line-through text-gray-400' : 
-          index % 2 === 0 ? 'bg-red-100' : 'bg-gray-50'}`}
+        ${task.isDone ? 'bg-green-100 line-through text-gray-400' : 'bg-red-100' 
+          }`}
       onClick={onEdit}
     >
       <div className="w-1/4 p-2 border-r border-gray-200">
@@ -273,7 +272,7 @@ function TaskItem({
             e.stopPropagation();
             onToggleDone();
           }}
-          className={`hover:bg-green-200 px-2 py-1 rounded ${task.isDone ? 'text-green-600' : 'text-gray-600'}`}
+          className={`text-green-600 hover:bg-green-200 px-2 py-1 rounded ${task.isDone ? 'text-green-600' : 'text-gray-600'}`}
         >
           ✓
         </button>

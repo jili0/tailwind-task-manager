@@ -9,7 +9,7 @@ function Header({ title, onClear, onPrint }) {
         <div className="flex space-x-2">
           <button 
             onClick={onPrint}
-            className="px-4 py-1 text-sm border border-blue-300 text-blue-600 rounded hover:bg-blue-50"
+            className="px-4 py-1 text-sm border border-blue-300 text-blue-600 rounded hover:bg-blue-200"
             title="Print tasks"
           >
             Print
